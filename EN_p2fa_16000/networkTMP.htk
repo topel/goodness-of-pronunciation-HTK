@@ -1,0 +1,44 @@
+VERSION=1.0
+N=21   L=21   
+I=0    W=!NULL               
+I=1    W=!NULL               
+I=2    W=SENT-START          
+I=3    W=sil                 
+I=4    W=P                   
+I=5    W=AE1                 
+I=6    W=T                   
+I=7    W=sp                  
+I=8    W=P                   
+I=9    W=UH1                 
+I=10   W=T                   
+I=11   W=sp                  
+I=12   W=DH                  
+I=13   W=AH0                 
+I=14   W=sp                  
+I=15   W=P                   
+I=16   W=AA1                 
+I=17   W=T                   
+I=18   W=sp                  
+I=19   W=sil                 
+I=20   W=SENT-END            
+J=0     S=20   E=1    
+J=1     S=0    E=2    
+J=2     S=2    E=3    
+J=3     S=19   E=3    
+J=4     S=3    E=4    
+J=5     S=4    E=5    
+J=6     S=5    E=6    
+J=7     S=6    E=7    
+J=8     S=7    E=8    
+J=9     S=8    E=9    
+J=10    S=9    E=10   
+J=11    S=10   E=11   
+J=12    S=11   E=12   
+J=13    S=12   E=13   
+J=14    S=13   E=14   
+J=15    S=14   E=15   
+J=16    S=15   E=16   
+J=17    S=16   E=17   
+J=18    S=17   E=18   
+J=19    S=18   E=19   
+J=20    S=19   E=20   
