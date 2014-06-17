@@ -22,13 +22,14 @@ base=`basename $wav .wav`
 # audio=${base}_16k.wav
 audio=${base}.wav
 
-sox -t aiff ../$wav -t wav -r $sr -e signed-integer -b 16 $audio pad 1 1
+sox -t aiff ../$wav -t wav -r $sr -e signed-integer -b 16 $audio
+# sox -t aiff ../$wav -t wav -r $sr -e signed-integer -b 16 $audio pad 1 1
 
 # endTime="-1"
 # echo "$audio 1 SpkID 0.0 $endTime <o,F1,unknown> $word" > $base.stm
 
  
-config=$models_dir/config_padding
+config=$models_dir/config
 
 dic=dictionnary
 labfile=$base.lab

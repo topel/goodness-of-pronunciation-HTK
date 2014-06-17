@@ -3,12 +3,13 @@
 import sys
 import os
 
-global ceredir
+# global ceredir
+
+ceredir = '/Users/cavaco/Work/MILLA/software/cerevoice_sdk_3.1.0_darwin_i386_python25_9536_academic' 
 
 class Cerevoz:
     def __init__( self, utterance ):
-        """Output an utterance spoken by our beloved Heather voice"""        
-        ceredir = '/Users/cavaco/Work/MILLA/software/cerevoice_sdk_3.1.0_darwin_i386_python25_9536_academic'        
+        """Output an utterance spoken by our beloved Heather voice"""              
         self.dryrun = False
         self.speak( utterance )
     
@@ -16,9 +17,9 @@ class Cerevoz:
         
         xmlFile = open ('utt.xml', 'w')
         xmlFile.write('<?xml version=\'1.0\'?>\n')
-        xmlFile.write('<parent>\n')
+        #xmlFile.write('<parent>\n')
         xmlFile.write(utt)
-        xmlFile.write('\n</parent>\n')
+        #xmlFile.write('\n</parent>\n')
         xmlFile.close()
         
         
@@ -43,7 +44,7 @@ def main( argv ):
     utt = argv[1]
     # utt = 'I need  <prosody pitch="high">toilet paper</prosody>'
     print(utt)
-    # Cerevoz ( utt )
+    Cerevoz ( utt )
 
     
 if __name__ == '__main__':
