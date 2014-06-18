@@ -1,13 +1,18 @@
 #!/bin/bash
  
-# ./gop_EN.sh ~/research/imerse/F01FR1phrase01_britain.wav ~/research/imerse/F01FR1phrase01_britain.sent 
- 
-# wav=$1
-input_file=$1
+bool_live=1
+
+if [ "$#" -eq 1 ]; then
+    input_file=$1
+elif [ "$#" -eq 2 ]; then
+    wav=$1
+    input_file=$2
+    bool_live=0
+fi
+
 
 scripts_dir=`pwd`
-# models_dir=$scripts_dir/EN2
-# models_dir=$scripts_dir/EN_voxforge
+
 models_dir=$scripts_dir/EN_p2fa_16000
 
 outdir=tmp.$$
@@ -20,33 +25,39 @@ sr=16000
 # mode=posterior
 # mode=likelihood
 
-# base=`basename $wav .wav`
-raw=recorded.raw
-base=`basename $raw .raw`
+if [ "$bool_live" -gt 0 ]; then 
 
-cd ../portaudio/bin
+    raw=recorded.raw
+    base=`basename $raw .raw`
 
-./paex_record_noPlayBack
+    cd ../portaudio/bin
 
-mv $raw $scripts_dir/
-cd $scripts_dir
+    ./paex_record_noPlayBack
 
-# audio=${base}_16k.wav
-audio=${base}.wav
+    mv $raw $scripts_dir/
+    cd $scripts_dir
 
-# sox -t wav ../$wav -t wav -r $sr -e signed-integer -b 16 $audio
+    audio=${base}.wav
+    sox -c 1 -r 16k -e floating-point -b 32 -L $raw -t wav  -r 16k -e signed -b 16 $outdir/$audio
 
-sox -c 1 -r 16k -e floating-point -b 32 -L $raw -t wav  -r 16k -e signed -b 16 $outdir/$audio
+    config=$models_dir/config
+
+else
+
+    base=`basename $wav .wav`
+    audio=${base}.wav
+
+    sox -t aiff $wav -t wav -r $sr -e signed-integer -b 16 $outdir/$audio pad 1 1
+
+    config=$models_dir/config_padding
+
+fi
 
 # endTime="-1"
 # echo "$audio 1 SpkID 0.0 $endTime <o,F1,unknown> $word" > $base.stm
 
 cd $outdir
  
-# config=$scripts_dir/htk.lb2.conf
-# config=$scripts_dir/htk.voxforge.conf
-config=$models_dir/config
-
 dic=dictionnary
 labfile=$base.lab
 
@@ -105,7 +116,7 @@ $models_dir/list 2>&1 | tee -a $log_align
 surfer_align=surfer_aligned.txt
 awk '{if(NF>3){printf "%.2f %.2f %s\n", $1*(10**-7), $2*(10**-7), $3}}' aligned.mlf > $surfer_align
 
-# free phone loop reco
+# free phone loop ASR
 
 # Grammar parsing: free phone loop
 
@@ -114,8 +125,6 @@ awk '{if(NF>3){printf "%.2f %.2f %s\n", $1*(10**-7), $2*(10**-7), $3}}' aligned.
 
 echo "(SENT-START <" > $models_dir/networkTMP
 echo "sil" >> $models_dir/networkTMP
-# echo "<K|F> AE1 T sp" >> $models_dir/networkTMP
-# echo "| F AE1 T" >> $models_dir/networkTMP
 head -3 ../$input_file |  tail -1  >> $models_dir/networkTMP
 echo "sil" >> $models_dir/networkTMP
 echo "> SENT-END ) " >> $models_dir/networkTMP
@@ -157,7 +166,7 @@ awk '{if(NF>3){printf "%.2f %.2f %s\n", $1*(10**-7), $2*(10**-7), $3}}' $mlf_rec
 
 infile=$mlf_align
 infile2=$mlf_reco
-info_outfile=gop.txt
+info_outfile=../gop.txt
 
 if [ -e $info_outfile ]; then rm $info_outfile; fi
 
@@ -171,7 +180,9 @@ found=false
 
 echo
 echo
-
+dir=/Users/cavaco/Work/MILLA/software/cerevoice_sdk_3.1.0_darwin_i386_python25_9536_academic
+ echo "let's see how you did, please wait a minute" | $dir/examples/basictts/basictts $dir//voices/cerevoice_heather_3.0.8_22k.voice $dir/voices/cerevoice_heather_3.0.8_22k.license
+ 
 while read line; do
 
   nb_fields=`echo $line | awk '{print NF}'`;
@@ -228,12 +239,8 @@ while read line; do
   fi;
 
   unconstrained_phone=0
-
-  #if [ $phone = "cl" ]; then
-    #echo "    1: $new_word WORD=$word $phone $beg $end $dur $dur_totale_mot $sc forced_phone=$forced_phone $forced "
-  #fi
   
-  info="W=$word P=$phone $dur "
+  info="W=$word $phone $dur "
   
   while read line2; do
 
@@ -241,7 +248,7 @@ while read line; do
     if [ $nb_fields2 -lt 4 ]; then continue; fi;
 
     phone2=`echo $line2 | awk '{print $3}'`;
-	if [ $phone2 = "sp" ] || [ $phone2 = "sil" ]; then continue; fi;
+    if [ $phone2 = "sp" ] || [ $phone2 = "sil" ]; then continue; fi;
 		
     beg2=`echo $line2 | awk '{printf "%d", $1}'`;
     end2=`echo $line2 | awk '{printf "%d", $2}'`;
@@ -249,7 +256,6 @@ while read line; do
 
     dur_total_free_phone=`echo "$end2 $beg2" | awk '{printf "%d", ($1-$2)*(10**-5)}'`
 
-    
     if [ $beg2 -ge $end ]; then
       break
     fi
@@ -286,7 +292,6 @@ while read line; do
 
   done < $infile2
 
-#  gop_phone=`echo "$forced_phone $unconstrained_phone $dur" | awk '{printf "%.4f", $1/$3-$2}'`
   gop_phone=`echo "$forced_phone $unconstrained_phone $dur" | awk '{printf "%.4f", ($1-$2)/$3}'`
 
   # valeur absolue:

@@ -40,8 +40,6 @@ class gopThresholds:
             
             aiff = 'alex_' + str(ind) + '.aiff'
             os.system('say -v ' + speaker + ' '+  sent )
-#            os.system('say -v Alex --file-format=WAVE --data-format=LEF32@16000 --bit-rate=256000 -o ' + outfile  + ' ' + sent )
-            #os.system('say -v Alex --file-format=WAVE --data-format=LEF32@16000 -o ' + aiff  + ' ' + sent )
             os.system('say -v ' + speaker + '  -o ' + aiff  + ' ' + sent)
             tmp1 = open ('tmp.txt', 'w')
             pron = pronsAlign[ind]
@@ -51,7 +49,7 @@ class gopThresholds:
             tmp1.write(pron2)
             tmp1.close()
 
-            os.system( './gop_EN_forPython_WAVEINPUT.sh ' + aiff + ' tmp.txt' )
+            os.system( './gop_EN_forPython.sh ' + aiff + ' tmp.txt' )
             ind += 1
             break
         

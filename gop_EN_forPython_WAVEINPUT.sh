@@ -97,8 +97,6 @@ awk '{if(NF>3){printf "%.2f %.2f %s\n", $1*(10**-7), $2*(10**-7), $3}}' aligned.
 
 echo "(SENT-START <" > $models_dir/networkTMP
 echo "sil" >> $models_dir/networkTMP
-# echo "<K|F> AE1 T sp" >> $models_dir/networkTMP
-# echo "| F AE1 T" >> $models_dir/networkTMP
 head -3 ../$input_file |  tail -1  >> $models_dir/networkTMP
 echo "sil" >> $models_dir/networkTMP
 echo "> SENT-END ) " >> $models_dir/networkTMP
